@@ -1,0 +1,1 @@
+ipython3 -i main.py
