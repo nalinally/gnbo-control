@@ -2,18 +2,17 @@ from http_robot_driver import HTTPRobotDriver
 
 class HTTPRobotOperator():
 
-  def __init__(self, driver, t):
+  def __init__(self, driver, t, name):
     self.driver = driver
     self.t = t
+    self.name = name
     self.extendings = [False, False]
     self.extend_vels = [0, 0]
     self.extend_end_times = [0, 0]
     self.rotatings = [False, False]
     self.rotate_poses = [0, 0]
     self.rotate_end_times = [0, 0]
-
-  def rotate_target_pos(t):
-    return
+    self.rotate_target_pos = [lambda t: 0, lambda t: 0]
 
   def extend(self, leftright, vel, duration = 3.0):
     self.extendings[leftright] = True
@@ -28,7 +27,7 @@ class HTTPRobotOperator():
     start_time = self.t()
     def target_pos(t):
       return start_pos + (pos - start_pos) * (t - start_time) / duration
-    self.rotate_target_pos = target_pos
+    self.rotate_target_pos[leftright] = target_pos
 
   def update(self):
     for leftright in [0, 1]:
@@ -42,8 +41,11 @@ class HTTPRobotOperator():
       if self.rotatings[leftright]:
         if self.t() >= self.rotate_end_times[leftright]:
           self.rotatings[leftright] = False
+          print(f"{self.name} rotate finished.")
         else:
-          self.driver.rotate(leftright, self.rotate_target_pos(self.t()))
+          target_pos = self.rotate_target_pos[leftright](self.t())
+          self.driver.rotate(leftright, target_pos)
+          print(f"{self.name} rotating to {target_pos}")
       
 
 
