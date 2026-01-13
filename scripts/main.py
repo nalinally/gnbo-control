@@ -56,6 +56,10 @@ def walk():
               [90 + A * np.cos(omega * t + phi), -90 - A * np.cos(omega * t + phi)]]
     rotate(angles)
 
+def walk2():
+  while True:
+    one_foot([0, 1, 2])
+
 def cycle():
   standby()
   time.sleep(0.5)
@@ -86,39 +90,77 @@ def one_cycle(operator_row):
   operator_row.inssert(0, operator_row.pop(-1))
 
 def one_cycle2(index_row):
-  t_1 = 1.0  # make triangle
+  t = 1.0  # 重心調整
+  drivers[index_row[-1]].rotate(0, 20)
+  drivers[index_row[-1]].rotate(1, -20)
+  # time.sleep(t)
+  input()
+  t = 1.0  # 持ち上げ
+  drivers[index_row[-2]].rotate(1, 0)
+  # time.sleep(t)
+  input()
+  t = 1.0  # 迎え準備
+  drivers[index_row[-3]].rotate(0, -45)
   drivers[index_row[-1]].rotate(0, 30)
   drivers[index_row[-1]].rotate(1, -30)
-  drivers[index_row[-2]].rotate(1, 30)
-  drivers[index_row[-2]].rotate(0, -30)
-  drivers[index_row[-3]].rotate(0, -30)
-  # time.sleep(t_1)
+  # time.sleep(t)
   input()
-  t_2 = 7.0
-  operators[index_row[-1]].extend(0, -10, t_2)
-  operators[index_row[-2]].extend(1, -10, t_2)
-  time.sleep(t_2)
+  t = 1.0  # 三角形
+  operators[index_row[-2]].rotate(1, 30, t)
+  operators[index_row[-3]].rotate(0, -30, t)
+  # time.sleep(t)
   input()
-  t_3 = 1.0
-  drivers[index_row[-3]].rotate(0, -10)
-  # time.sleep(t_3)
+  t = 10.0  # 合体解除
+  operators[index_row[-1]].extend(0, -10, t)
+  operators[index_row[-2]].extend(1, -10, t)
+  time.sleep(t)
   input()
-  t_4 = 1.0
-  operators[index_row[-3]].rotate(0, 90, 3.0)
-  # time.sleep(t_4)
-  input()
-  t_5 = 1.0
+  t = 1.0  # 分離準備
+  drivers[index_row[-2]].rotate(1, -90)
   drivers[index_row[-1]].rotate(1, -90)
-  drivers[index_row[-1]].rotate(0, 90)
-  drivers[index_row[-2]].rotate(0, 90)
-  # time.sleep(t_5)
+  # time.sleep(t)
   input()
-  operators[index_row[-1]].extend(0, 10, t_2)
-  operators[index_row[-2]].extend(1, 10, t_2)
-  time.sleep(t_2)
+  t = 1.0  # 分離
+  operators[index_row[-3]].rotate(0, 0, t)
+  # time.sleep(t)
   input()
-  index_row.inssert(0, index_row.pop(-1))
-  return index_row
+  t = 3.0  # 接地
+  operators[index_row[-3]].rotate(0, 90, t)
+  # time.sleep(t)
+  input()
+  t = 1.0  # 初期状態へ
+  standby()
+  # time.sleep(t)
+  input()
+  t = 6.0  # 次合体準備
+  operators[index_row[-1]].extend(0, 10, t)
+  operators[index_row[-2]].extend(1, 10, t)
+  time.sleep(t)
+  index_row_arr = np.array(index_row)
+  index_row_arr.inssert(0, index_row_arr.pop(-1))
+  return index_row_arr
+
+def one_foot(index_row):
+  # 真ん中free
+  drivers[index_row[-2]].set_free(2)
+  t = 0.5  # 真ん中持ち上げ
+  drivers[index_row[-1]].rotate(0, 45)
+  drivers[index_row[-3]].rotate(1, -45)
+  time.sleep(t)
+  # input()
+  t = 0.5  # 真ん中回転
+  drivers[index_row[-2]].rotate(0, 120)
+  time.sleep(t)
+  # input()
+  t = 0.5  # 真ん中押し付け
+  drivers[index_row[-1]].rotate(0, 110)
+  drivers[index_row[-3]].rotate(1, -110)
+  time.sleep(t)
+  # input()
+  t = 0.5  # 真ん中回転
+  drivers[index_row[-2]].rotate(0, 0)
+  time.sleep(t)
+  # input()
 
 def rotate(poses):
   for i in range(len(poses)):

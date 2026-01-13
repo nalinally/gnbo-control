@@ -8,7 +8,7 @@ class HTTPRobotDriver():
                    "right_rotate" : 2,
                    "right_extend" : 3}
   
-  rotate_limits = [-120, 120]
+  rotate_limits = [-135, 135]
 
   arm_clearance = 45
 
