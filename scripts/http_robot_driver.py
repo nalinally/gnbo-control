@@ -12,20 +12,21 @@ class HTTPRobotDriver():
 
   arm_clearance = 45
 
-  def __init__(self, ip_adress, servo_ids, servo_offsets, servo_reverse):
+  def __init__(self, ip_adress, servo_ids, servo_offsets, servo_reverses, name):
     self.ip_adress = ip_adress
     self.prefix = f"http://{self.ip_adress}"
     self.servo_ids = servo_ids
     self.servo_offsets = servo_offsets
-    self.servo_reverse = servo_reverse
+    self.servo_reverses = servo_reverses
+    self.name = name
 
     self.rotate_pos = [HTTPRobotDriver.rotate_limits[1], HTTPRobotDriver.rotate_limits[0]]
 
   def set_pos(self, index, pos):
-    print(requests.get(f"{self.prefix}/set_pos?id={self.servo_ids[index]}&pos={pos}").content.decode())
+    print(f"[{self.name}] {requests.get(f"{self.prefix}/set_pos?id={self.servo_ids[index]}&pos={pos}").content.decode()}")
 
   def set_free(self, index):
-    print(requests.get(f"{self.prefix}/set_free?id={self.servo_ids[index]}").content.decode())
+    print(f"[{self.name}] {requests.get(f"{self.prefix}/set_free?id={self.servo_ids[index]}").content.decode()}")
 
   def set_spd(self, index, spd):
     return requests.get(f"{self.prefix}/set_spd?id={self.servo_ids[index]}&spd={spd}").content.decode()
@@ -46,7 +47,7 @@ class HTTPRobotDriver():
     index = self.index("left_rotate") if leftright == 0 else self.index("right_rotate")
     range = self.rotate_range(leftright)
     pos = np.clip([pos_], range[0] , range[1])[0]
-    pos = pos * (1 if leftright == 0 else -1) * (-1 if self.servo_reverse else 1)
+    pos = pos * (1 if leftright == 0 else -1) * (-1 if self.servo_reverses[leftright] else 1)
     self.rotate_pos[leftright] = pos_
     self.set_pos(index, pos + self.servo_offsets[index])
 

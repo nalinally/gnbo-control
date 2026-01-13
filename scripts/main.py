@@ -6,10 +6,12 @@ import numpy as np
 
 ip_adresses = [
   "172.20.10.5",
+  "172.20.10.4",
   "172.20.10.2",
 ]
 
 servo_ids_list = [
+  [0, 1, 2, 3],
   [0, 1, 2, 3],
   [0, 1, 2, 3],
 ]
@@ -17,22 +19,26 @@ servo_ids_list = [
 servo_offsets_list = [
   [7.8, 0, 0, 0],
   [-9, 0, 0, 0],
+  [2, 0, 0, 0],
 ]
 
-servo_reverses = [
-  True, False
+servo_reverses_list = [
+  [True, True],
+  [False, False],
+  [True, True]
 ]
 
 names = [
   "0",
-  "1"
+  "1",
+  "2"
 ]
 
 drivers = []
 operators = []
 
-for ip_adress, servo_ids, servo_offsets, servo_reverse, name in zip(ip_adresses, servo_ids_list, servo_offsets_list, servo_reverses, names):
-  drivers.append(HTTPRobotDriver(ip_adress, servo_ids, servo_offsets, servo_reverse))
+for ip_adress, servo_ids, servo_offsets, servo_reverses, name in zip(ip_adresses, servo_ids_list, servo_offsets_list, servo_reverses_list, names):
+  drivers.append(HTTPRobotDriver(ip_adress, servo_ids, servo_offsets, servo_reverses, name))
   operators.append(HTTPRobotOperator(drivers[-1], time.time, f"operator{name}"))
 
 def main():
@@ -78,6 +84,41 @@ def one_cycle(operator_row):
   operator_row[-2].extend(1, 10, t_2)
   time.sleep(t_2)
   operator_row.inssert(0, operator_row.pop(-1))
+
+def one_cycle2(index_row):
+  t_1 = 1.0  # make triangle
+  drivers[index_row[-1]].rotate(0, 30)
+  drivers[index_row[-1]].rotate(1, -30)
+  drivers[index_row[-2]].rotate(1, 30)
+  drivers[index_row[-2]].rotate(0, -30)
+  drivers[index_row[-3]].rotate(0, -30)
+  # time.sleep(t_1)
+  input()
+  t_2 = 7.0
+  operators[index_row[-1]].extend(0, -10, t_2)
+  operators[index_row[-2]].extend(1, -10, t_2)
+  time.sleep(t_2)
+  input()
+  t_3 = 1.0
+  drivers[index_row[-3]].rotate(0, -10)
+  # time.sleep(t_3)
+  input()
+  t_4 = 1.0
+  operators[index_row[-3]].rotate(0, 90, 3.0)
+  # time.sleep(t_4)
+  input()
+  t_5 = 1.0
+  drivers[index_row[-1]].rotate(1, -90)
+  drivers[index_row[-1]].rotate(0, 90)
+  drivers[index_row[-2]].rotate(0, 90)
+  # time.sleep(t_5)
+  input()
+  operators[index_row[-1]].extend(0, 10, t_2)
+  operators[index_row[-2]].extend(1, 10, t_2)
+  time.sleep(t_2)
+  input()
+  index_row.inssert(0, index_row.pop(-1))
+  return index_row
 
 def rotate(poses):
   for i in range(len(poses)):
