@@ -19,6 +19,7 @@ class HTTPRobotDriver():
     self.servo_offsets = servo_offsets
     self.servo_reverses = servo_reverses
     self.name = name
+    self.upset = False
 
     self.rotate_pos = [HTTPRobotDriver.rotate_limits[1], HTTPRobotDriver.rotate_limits[0]]
 
@@ -43,15 +44,19 @@ class HTTPRobotDriver():
   def get_id(self):
     return int(requests.get(f"{self.prefix}/get_id").content.decode())
   
-  def rotate(self, leftright, pos_):
+  def rotate(self, leftright_, pos_):
+    leftright = leftright_ if not self.upset else 1-leftright_
     index = self.index("left_rotate") if leftright == 0 else self.index("right_rotate")
-    range = self.rotate_range(leftright)
-    pos = np.clip([pos_], range[0] , range[1])[0]
+    # range = self.rotate_range(leftright)
+    # pos = np.clip([pos_], range[0] , range[1])[0]
+    pos = (pos_ - 180 if leftright_ == 0 else pos_ + 180) if self.upset else pos_
+    print(f"[{self.name}] pos:{pos}")
     pos = pos * (1 if leftright == 0 else -1) * (-1 if self.servo_reverses[leftright] else 1)
     self.rotate_pos[leftright] = pos_
-    self.set_pos(index, pos + self.servo_offsets[index])
+    self.set_pos(index, np.clip([pos + self.servo_offsets[index]], HTTPRobotDriver.rotate_limits[0], HTTPRobotDriver.rotate_limits[1])[0])
 
-  def extend(self, leftright, vel):
+  def extend(self, leftright_, vel):
+    leftright = leftright_ if not self.upset else 1-leftright_
     index = self.index("left_extend") if leftright == 0 else self.index("right_extend")
     self.set_pos(index, vel)
 
@@ -60,6 +65,9 @@ class HTTPRobotDriver():
       return [np.max([HTTPRobotDriver.rotate_limits[0], self.rotate_pos[1]]), HTTPRobotDriver.rotate_limits[1]]
     else:
       return [HTTPRobotDriver.rotate_limits[0], np.min([HTTPRobotDriver.rotate_limits[1], self.rotate_pos[0]])]
+
+  def turn_over(self):
+    self.upset = not self.upset
 
   def index(self, name):
     return HTTPRobotDriver.servo_indexes[name]

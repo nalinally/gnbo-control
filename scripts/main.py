@@ -60,12 +60,12 @@ def walk2():
   while True:
     one_foot([0, 1, 2])
 
-def cycle():
+def cycle(index_row=[0, 1, 2]):
   standby()
   time.sleep(0.5)
-  operator_row = [operators[0], operators[1], operators[2]]
   while True:
-    one_cycle(operator_row)
+    one_cycle2(index_row)
+    index_row.insert(0, index_row.pop(2))
 
 def one_cycle(operator_row):
   t_1 = 1.0  # make triangle
@@ -90,55 +90,49 @@ def one_cycle(operator_row):
   operator_row.inssert(0, operator_row.pop(-1))
 
 def one_cycle2(index_row):
-  t = 1.0  # 重心調整
+  t = 0.5  # 重心調整
   drivers[index_row[-1]].rotate(0, 20)
   drivers[index_row[-1]].rotate(1, -20)
-  # time.sleep(t)
-  input()
+  time.sleep(t)
+  # input()
   t = 1.0  # 持ち上げ
   drivers[index_row[-2]].rotate(1, 0)
-  # time.sleep(t)
-  input()
-  t = 1.0  # 迎え準備
+  time.sleep(t)
+  # input()
+  t = 0.5  # 迎え準備
   drivers[index_row[-3]].rotate(0, -45)
   drivers[index_row[-1]].rotate(0, 30)
   drivers[index_row[-1]].rotate(1, -30)
-  # time.sleep(t)
-  input()
+  time.sleep(t)
+  # input()
   t = 1.0  # 三角形
   operators[index_row[-2]].rotate(1, 30, t)
   operators[index_row[-3]].rotate(0, -30, t)
-  # time.sleep(t)
-  input()
+  time.sleep(t)
+  # input()
   t = 10.0  # 合体解除
   operators[index_row[-1]].extend(0, -10, t)
   operators[index_row[-2]].extend(1, -10, t)
   time.sleep(t)
-  input()
-  t = 1.0  # 分離準備
+  # input()
+  t = 0.4  # 分離準備
   drivers[index_row[-2]].rotate(1, -90)
   drivers[index_row[-1]].rotate(1, -90)
-  # time.sleep(t)
-  input()
-  t = 1.0  # 分離
+  time.sleep(t)
+  # input()
+  t = 0.5  # 分離
   operators[index_row[-3]].rotate(0, 0, t)
-  # time.sleep(t)
-  input()
-  t = 3.0  # 接地
+  time.sleep(t)
+  # input()
+  t = 1.5  # 接地
   operators[index_row[-3]].rotate(0, 90, t)
-  # time.sleep(t)
-  input()
-  t = 1.0  # 初期状態へ
+  time.sleep(t)
+  # input()
+  t = 8.0  # 次初期状態へ
   standby()
-  # time.sleep(t)
-  input()
-  t = 6.0  # 次合体準備
   operators[index_row[-1]].extend(0, 10, t)
   operators[index_row[-2]].extend(1, 10, t)
   time.sleep(t)
-  index_row_arr = np.array(index_row)
-  index_row_arr.inssert(0, index_row_arr.pop(-1))
-  return index_row_arr
 
 def one_foot(index_row):
   # 真ん中free
