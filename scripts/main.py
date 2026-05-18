@@ -23,7 +23,7 @@ servo_offsets_list = [
 ]
 
 servo_reverses_list = [
-  [True, True],
+  [False, False],
   [False, False],
   [True, True]
 ]
