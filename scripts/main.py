@@ -168,6 +168,23 @@ def rotate_all(pos):
 
 def standby():
   rotate_all([90, -90])
+  
+def mocube_unit_test():
+  while True:
+    o = input("r or l or u or d : ")
+    if o == "r":
+      drivers[1].set_pos(1,-10)
+    if o == "l":
+      drivers[1].set_pos(1,10)
+    if o == "u":
+      drivers[1].set_pos(0,10)
+    if o == "d":
+      drivers[1].set_pos(0,-10)
+    input()
+    drivers[1].set_pos(1,0)
+    drivers[1].set_pos(0,0)
+    
+
 
 def init():
   rotate_all([135, -135])
